@@ -1,3 +1,6 @@
 __pycache__/
 *.pyc
 .venv/
+
+# LaTeX build
+practical_1/report/build/

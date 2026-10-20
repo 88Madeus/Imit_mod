@@ -14,10 +14,18 @@ from .experiment import ScatteringResults  # noqa: E402
 class ResultsPlotter:
     """Строит и сохраняет графики пп. 1–4 задания."""
 
-    def __init__(self, results: ScatteringResults, output_dir: Path, dpi: int = 150):
+    def __init__(
+        self,
+        results: ScatteringResults,
+        output_dir: Path,
+        dpi: int = 150,
+        show_titles: bool = True,
+    ):
         self.results = results
         self.output_dir = Path(output_dir)
         self.dpi = dpi
+        # Без заголовков графики вставляются в отчёт: название рисунка — в подписи
+        self.show_titles = show_titles
         collision = results.collision
         self.subtitle = (
             f"{collision.projectile.symbol} → {collision.target.symbol}, "
@@ -26,7 +34,8 @@ class ResultsPlotter:
 
     def _new_figure(self, title: str):
         fig, ax = plt.subplots(figsize=(8, 5.5))
-        ax.set_title(f"{title}\n{self.subtitle}", fontsize=11)
+        if self.show_titles:
+            ax.set_title(f"{title}\n{self.subtitle}", fontsize=11)
         ax.grid(True, which="both", alpha=0.3)
         return fig, ax
 
@@ -51,8 +60,9 @@ class ResultsPlotter:
     def plot_kinematic_factor(self) -> Path:
         res = self.results
         fig, (ax_k, ax_e) = plt.subplots(1, 2, figsize=(12, 5))
-        fig.suptitle(f"Кинематический фактор k(θ1) и энергия E1(θ1)\n{self.subtitle}",
-                     fontsize=11)
+        if self.show_titles:
+            fig.suptitle(f"Кинематический фактор k(θ1) и энергия E1(θ1)\n{self.subtitle}",
+                         fontsize=11)
         angles = np.degrees(res.theta1_grid)
         ax_k.plot(angles, res.kinematic_factor, color="tab:blue")
         ax_k.set_ylabel("k = E1 / E0")
